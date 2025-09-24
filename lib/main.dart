@@ -213,6 +213,11 @@ class StudentDashboard extends StatelessWidget {
               builder: (context) => const FeesScreen(),
             ));
           }),
+          _buildDashboardCard('Hostel Problem', Icons.report_problem, Colors.deepOrange, () {
+            Navigator.push(context, MaterialPageRoute(
+              builder: (context) => const HostelProblemScreen(),
+            ));
+          }),
         ],
       ),
     );
@@ -1519,6 +1524,317 @@ class TeacherReportsScreen extends StatelessWidget {
             Text(score, style: TextStyle(fontWeight: FontWeight.bold, color: color)),
             Text('Att: $attendance', style: const TextStyle(fontSize: 10)),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+// Hostel Problem Screen
+class HostelProblemScreen extends StatefulWidget {
+  const HostelProblemScreen({super.key});
+
+  @override
+  State<HostelProblemScreen> createState() => _HostelProblemScreenState();
+}
+
+class _HostelProblemScreenState extends State<HostelProblemScreen> {
+  final TextEditingController _problemController = TextEditingController();
+  final TextEditingController _roomController = TextEditingController();
+  String _selectedProblemType = 'Electrical';
+  String _selectedPriority = 'Medium';
+  bool _hasPhoto = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey.shade50,
+      appBar: AppBar(
+        title: const Text('Hostel Problem Report'),
+        backgroundColor: Colors.deepOrange,
+        foregroundColor: Colors.white,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Quick Stats
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.1),
+                    spreadRadius: 2,
+                    blurRadius: 8,
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  const Text('Your Complaint Status', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 15),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildStatusCard('Open', '2', Colors.orange),
+                      _buildStatusCard('In Progress', '1', Colors.blue),
+                      _buildStatusCard('Resolved', '8', Colors.green),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Report New Problem
+            const Text('Report New Problem', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.1),
+                    spreadRadius: 2,
+                    blurRadius: 8,
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  // Room Number
+                  TextField(
+                    controller: _roomController,
+                    decoration: const InputDecoration(
+                      labelText: 'Room Number',
+                      hintText: 'Enter your room number',
+                      prefixIcon: Icon(Icons.meeting_room),
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+
+                  // Problem Type Dropdown
+                  DropdownButtonFormField<String>(
+                    value: _selectedProblemType,
+                    decoration: const InputDecoration(
+                      labelText: 'Problem Type',
+                      prefixIcon: Icon(Icons.category),
+                      border: OutlineInputBorder(),
+                    ),
+                    items: ['Electrical', 'Plumbing', 'AC/Heating', 'Furniture', 'Internet', 'Cleanliness', 'Security', 'Other']
+                        .map((type) => DropdownMenuItem(value: type, child: Text(type)))
+                        .toList(),
+                    onChanged: (value) => setState(() => _selectedProblemType = value!),
+                  ),
+                  const SizedBox(height: 15),
+
+                  // Priority Dropdown
+                  DropdownButtonFormField<String>(
+                    value: _selectedPriority,
+                    decoration: const InputDecoration(
+                      labelText: 'Priority',
+                      prefixIcon: Icon(Icons.priority_high),
+                      border: OutlineInputBorder(),
+                    ),
+                    items: ['Low', 'Medium', 'High', 'Emergency']
+                        .map((priority) => DropdownMenuItem(value: priority, child: Text(priority)))
+                        .toList(),
+                    onChanged: (value) => setState(() => _selectedPriority = value!),
+                  ),
+                  const SizedBox(height: 15),
+
+                  // Problem Description
+                  TextField(
+                    controller: _problemController,
+                    maxLines: 3,
+                    decoration: const InputDecoration(
+                      labelText: 'Problem Description',
+                      hintText: 'Describe the problem in detail...',
+                      prefixIcon: Icon(Icons.description),
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+
+                  // Photo Upload Section
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Column(
+                      children: [
+                        Icon(
+                          _hasPhoto ? Icons.check_circle : Icons.camera_alt,
+                          size: 40,
+                          color: _hasPhoto ? Colors.green : Colors.grey,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          _hasPhoto ? 'Photo Selected ✓' : 'Add Photo (Optional)',
+                          style: TextStyle(
+                            color: _hasPhoto ? Colors.green : Colors.grey.shade600,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            setState(() => _hasPhoto = !_hasPhoto);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(_hasPhoto ? 'Photo selected!' : 'Photo removed'),
+                                backgroundColor: _hasPhoto ? Colors.green : Colors.grey,
+                              ),
+                            );
+                          },
+                          icon: Icon(_hasPhoto ? Icons.refresh : Icons.add_a_photo),
+                          label: Text(_hasPhoto ? 'Change Photo' : 'Select Photo'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.deepOrange,
+                            foregroundColor: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Submit Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (_roomController.text.isNotEmpty && _problemController.text.isNotEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Problem reported successfully! Complaint ID: #HST001'),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                          _roomController.clear();
+                          _problemController.clear();
+                          setState(() => _hasPhoto = false);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Please fill all required fields'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepOrange,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                      child: const Text('Submit Problem Report', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Previous Complaints
+            const Text('Your Previous Complaints', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+            _buildComplaintCard(
+              'HST008',
+              'AC not working properly',
+              'A-204',
+              'AC/Heating',
+              'In Progress',
+              'Sept 20, 2024',
+              Colors.blue,
+            ),
+            _buildComplaintCard(
+              'HST007',
+              'WiFi connectivity issues',
+              'A-204',
+              'Internet',
+              'Resolved',
+              'Sept 18, 2024',
+              Colors.green,
+            ),
+            _buildComplaintCard(
+              'HST006',
+              'Leaking water tap in bathroom',
+              'A-204',
+              'Plumbing',
+              'Resolved',
+              'Sept 15, 2024',
+              Colors.green,
+            ),
+            _buildComplaintCard(
+              'HST005',
+              'Fan making loud noise',
+              'A-204',
+              'Electrical',
+              'Open',
+              'Sept 22, 2024',
+              Colors.orange,
+            ),
+            _buildComplaintCard(
+              'HST004',
+              'Door lock not working',
+              'A-204',
+              'Security',
+              'Resolved',
+              'Sept 10, 2024',
+              Colors.green,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatusCard(String label, String count, Color color) {
+    return Column(
+      children: [
+        Text(count, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: color)),
+        Text(label, style: const TextStyle(fontSize: 12)),
+      ],
+    );
+  }
+
+  Widget _buildComplaintCard(String id, String problem, String room, String type, String status, String date, Color color) {
+    return Card(
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: color,
+          child: Text(id.split('HST')[1], style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        ),
+        title: Text(problem, style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Room: $room • Type: $type'),
+            Text('Date: $date', style: const TextStyle(fontSize: 12)),
+          ],
+        ),
+        trailing: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            status,
+            style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 12),
+          ),
         ),
       ),
     );
