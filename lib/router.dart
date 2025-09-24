@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'providers/auth_providers.dart';
+import 'data/models/user_role.dart';
 import 'features/auth/login_screen.dart';
 import 'features/student/dashboard_screen.dart';
 import 'features/faculty/dashboard_screen.dart' as faculty;
@@ -28,33 +29,53 @@ class SplashRedirect extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // very simple flow: check auth & role, redirect
+    // Demo mode - directly show login screen
+    // Remove this and uncomment below for full Supabase integration
+    return const LoginScreen();
+    
+    // Full Supabase integration (commented out for demo)
+    /*
     final session = ref.watch(sessionProvider);
+    final userRole = ref.watch(userRoleProvider);
+    
     return session.when(
       data: (s) {
         if (s == null) return const LoginScreen();
-        // user logged in -> fetch role
-        ref.read(userRoleProvider.future).then((role) {
-          if (role == null) return; // fallback
-          switch (role) {
-            case UserRole.student:
-              context.go('/student');
-              break;
-            case UserRole.faculty:
-              context.go('/faculty');
-              break;
-            case UserRole.admin:
-              context.go('/admin');
-              break;
-            case UserRole.warden:
-              context.go('/warden');
-              break;
-          }
-        });
-        return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        
+        // User is logged in, check role
+        return userRole.when(
+          data: (role) {
+            // Use WidgetsBinding to navigate after build
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (role != null) {
+                _navigateBasedOnRole(context, role);
+              }
+            });
+            return const Scaffold(body: Center(child: CircularProgressIndicator()));
+          },
+          loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
+          error: (e, st) => const LoginScreen(),
+        );
       },
       loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (e, st) => Scaffold(body: Center(child: Text('Error: $e'))),
     );
+    */
+  }
+  
+  void _navigateBasedOnRole(BuildContext context, UserRole role) {
+    String route;
+    if (role == UserRole.student) {
+      route = '/student';
+    } else if (role == UserRole.faculty) {
+      route = '/faculty';
+    } else if (role == UserRole.admin) {
+      route = '/admin';
+    } else if (role == UserRole.warden) {
+      route = '/warden';
+    } else {
+      route = '/login';
+    }
+    context.go(route);
   }
 }

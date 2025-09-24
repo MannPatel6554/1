@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../providers/auth_providers.dart';
+import 'package:go_router/go_router.dart';
+// import '../../providers/auth_providers.dart'; // Commented out for demo mode
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -15,37 +16,91 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final repo = ref.read(authRepoProvider);
+    // Demo mode - no need for auth repository
+    // final repo = ref.read(authRepoProvider);
+    
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
+      appBar: AppBar(title: const Text('CampusERP Login')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(children: [
-          TextField(controller: _email, decoration: const InputDecoration(labelText: 'Email')),
-          TextField(controller: _password, decoration: const InputDecoration(labelText: 'Password'), obscureText: true),
-          const SizedBox(height: 12),
-          ElevatedButton(
-            onPressed: _loading
-                ? null
-                : () async {
-                    setState(() => _loading = true);
-                    try {
-                      final res = await repo.signIn(_email.text.trim(), _password.text.trim());
-                      if (res.session != null) {
-                        // signed in; GoRouter splash will redirect
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Check credentials or confirm email')));
-                      }
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Login error: $e')));
-                    } finally {
-                      setState(() => _loading = false);
-                    }
-                  },
-            child: _loading ? const CircularProgressIndicator() : const Text('Login'),
-          ),
-          TextButton(onPressed: () => repo.sendMagicLink(_email.text.trim()), child: const Text('Send Magic Link')),
-        ]),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.school, size: 80, color: Colors.black),
+            const SizedBox(height: 20),
+            const Text(
+              'Welcome to CampusERP',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
+            ),
+            const SizedBox(height: 40),
+            TextField(
+              controller: _email, 
+              decoration: const InputDecoration(
+                labelText: 'Email',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.email),
+              )
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _password, 
+              decoration: const InputDecoration(
+                labelText: 'Password',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.lock),
+              ), 
+              obscureText: true
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                onPressed: _loading
+                    ? null
+                    : () async {
+                        setState(() => _loading = true);
+                        
+                        // Demo login - simulate authentication
+                        await Future.delayed(const Duration(seconds: 1));
+                        
+                        // Navigate based on demo email
+                        if (_email.text.contains('student')) {
+                          context.go('/student');
+                        } else if (_email.text.contains('faculty')) {
+                          context.go('/faculty');
+                        } else if (_email.text.contains('admin')) {
+                          context.go('/admin');
+                        } else if (_email.text.contains('warden')) {
+                          context.go('/warden');
+                        } else {
+                          // Default to student dashboard
+                          context.go('/student');
+                        }
+                        
+                        setState(() => _loading = false);
+                      },
+                child: _loading 
+                    ? const CircularProgressIndicator(color: Colors.white) 
+                    : const Text('Login', style: TextStyle(fontSize: 18)),
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Demo Users:',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+            const SizedBox(height: 10),
+            const Column(
+              children: [
+                Text('• student@demo.com - Student Dashboard'),
+                Text('• faculty@demo.com - Faculty Dashboard'),
+                Text('• admin@demo.com - Admin Dashboard'),
+                Text('• warden@demo.com - Warden Dashboard'),
+              ],
+            ),
+          ]
+        ),
       ),
     );
   }

@@ -8,7 +8,6 @@ class AttendanceScreen extends StatefulWidget {
 
 class _AttendanceScreenState extends State<AttendanceScreen> {
   String _course = 'CS101';
-  DateTime _date = DateTime.now();
   final students = ['S001', 'S002', 'S003']; // mock
   final present = <String>{};
 
