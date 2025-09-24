@@ -20,17 +20,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     // final repo = ref.read(authRepoProvider);
     
     return Scaffold(
+      backgroundColor: Colors.grey.shade900, // Dark background for white text
       appBar: AppBar(title: const Text('CampusERP Login')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.school, size: 80, color: Colors.black),
+            const Icon(Icons.school, size: 80, color: Colors.white),
             const SizedBox(height: 20),
             const Text(
               'Welcome to CampusERP',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
             ),
             const SizedBox(height: 40),
             TextField(
@@ -86,17 +87,36 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ),
             ),
             const SizedBox(height: 20),
+            
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text("Don't have an account? ", style: TextStyle(color: Colors.white)),
+                TextButton(
+                  onPressed: () => context.go('/signup'),
+                  child: const Text(
+                    'Sign up here',
+                    style: TextStyle(
+                      color: Colors.blue,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            
             const Text(
               'Demo Users:',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white),
             ),
             const SizedBox(height: 10),
             const Column(
               children: [
-                Text('• student@demo.com - Student Dashboard'),
-                Text('• faculty@demo.com - Faculty Dashboard'),
-                Text('• admin@demo.com - Admin Dashboard'),
-                Text('• warden@demo.com - Warden Dashboard'),
+                Text('• student@demo.com - Student Dashboard', style: TextStyle(color: Colors.white)),
+                Text('• faculty@demo.com - Faculty Dashboard', style: TextStyle(color: Colors.white)),
+                Text('• admin@demo.com - Admin Dashboard', style: TextStyle(color: Colors.white)),
+                Text('• warden@demo.com - Warden Dashboard', style: TextStyle(color: Colors.white)),
               ],
             ),
           ]

@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'providers/auth_providers.dart';
 import 'data/models/user_role.dart';
 import 'features/auth/login_screen.dart';
+import 'features/auth/signup_screen.dart';
+import 'features/landing/landing_screen.dart';
 import 'features/student/dashboard_screen.dart';
 import 'features/faculty/dashboard_screen.dart' as faculty;
 import 'features/admin/dashboard_screen.dart' as admin;
@@ -16,7 +18,9 @@ final router = GoRouter(
   initialLocation: '/',
   routes: [
     GoRoute(path: '/', builder: (c, s) => const SplashRedirect()),
+    GoRoute(path: '/landing', builder: (c, s) => const LandingScreen()),
     GoRoute(path: '/login', builder: (c, s) => const LoginScreen()),
+    GoRoute(path: '/signup', builder: (c, s) => const SignupScreen()),
     GoRoute(path: '/student', builder: (c, s) => const StudentDashboardScreen()),
     GoRoute(path: '/faculty', builder: (c, s) => const faculty.FacultyDashboard()),
     GoRoute(path: '/admin', builder: (c, s) => const admin.AdminDashboard()),
@@ -29,9 +33,9 @@ class SplashRedirect extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Demo mode - directly show login screen
+    // Demo mode - show landing page first
     // Remove this and uncomment below for full Supabase integration
-    return const LoginScreen();
+    return const LandingScreen();
     
     // Full Supabase integration (commented out for demo)
     /*
